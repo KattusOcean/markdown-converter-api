@@ -44,9 +44,7 @@ info:
       value: REST
 
 x-documentation:
-  readme:
-    type: link
-    value: https://markdown-converter-api.vercel.app/docs
+  readme: https://markdown-converter-api.vercel.app/docs
   spotlights:
     - title: Quick Start
       description: Send a POST request with a Markdown file URL and receive HTML in seconds.
