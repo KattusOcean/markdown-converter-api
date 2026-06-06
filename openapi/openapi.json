@@ -1,0 +1,273 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Markdown Converter",
+    "description": "Fetch Markdown from any public URL and get back raw Markdown plus rendered HTML.",
+    "version": "1.0.0",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    },
+    "termsOfService": "https://markdown-converter-api.vercel.app/terms",
+    "contact": {
+      "name": "API Support",
+      "email": "support@example.com"
+    },
+    "x-category": "Tools",
+    "x-long-description": "**Markdown Converter** is a simple REST API that fetches Markdown content from a public URL\nand returns both the original Markdown source and fully rendered HTML.\n\n## Use cases\n\n- Render README files from GitHub or GitLab in your app\n- Build documentation viewers without running a Markdown parser client-side\n- Convert remote `.md` files for CMS previews or static site pipelines\n\n## Authentication\n\nEvery request must include your API key in the `x-api-key` header. Keys are issued per account\nand include a monthly request quota.\n\n## Rate limits\n\nEach API key has a configurable `requests_limit`. When the limit is reached, the API returns\n`403 Forbidden` until the quota is reset or upgraded.\n\n## Supported URLs\n\n- Public `http://` and `https://` URLs only\n- Maximum file size: 5 MB\n- Private networks and localhost are blocked for security\n",
+    "x-website": "https://markdown-converter-api.vercel.app",
+    "x-public": true,
+    "x-version-lifecycle": "active",
+    "x-badges": [
+      {
+        "name": "API Type",
+        "value": "REST"
+      }
+    ]
+  },
+  "x-documentation": {
+    "readme": {
+      "type": "link",
+      "value": "https://markdown-converter-api.vercel.app/docs"
+    },
+    "spotlights": [
+      {
+        "title": "Quick Start",
+        "description": "Send a POST request with a Markdown file URL and receive HTML in seconds.",
+        "link": "https://markdown-converter-api.vercel.app/docs"
+      },
+      {
+        "title": "Landing Page",
+        "description": "Full API reference, code examples, and error codes.",
+        "link": "https://markdown-converter-api.vercel.app/"
+      }
+    ]
+  },
+  "servers": [
+    {
+      "url": "https://markdown-converter-api.vercel.app",
+      "description": "Production"
+    },
+    {
+      "url": "http://localhost:3000",
+      "description": "Local development"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Convert",
+      "description": "Markdown fetch and conversion operations"
+    }
+  ],
+  "paths": {
+    "/api/v1/convert": {
+      "post": {
+        "tags": [
+          "Convert"
+        ],
+        "operationId": "convertMarkdown",
+        "summary": "Convert a Markdown URL to HTML",
+        "description": "Fetches the Markdown file at the given URL, returns the raw Markdown content,\nand the HTML rendering produced by a remark-based pipeline.\n\nUsage is tracked against your API key quota on each successful authentication.\n",
+        "security": [
+          {
+            "ApiKeyAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConvertRequest"
+              },
+              "examples": {
+                "githubReadme": {
+                  "summary": "GitHub README",
+                  "value": {
+                    "url": "https://raw.githubusercontent.com/github/markdown-toolbar-element/main/README.md"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Markdown fetched and converted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConvertResponse"
+                },
+                "examples": {
+                  "success": {
+                    "summary": "Successful conversion",
+                    "value": {
+                      "original_url": "https://example.com/readme.md",
+                      "markdown": "# Hello\n\nWorld",
+                      "html": "<h1>Hello</h1>\n<p>World</p>"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid request (missing URL, bad JSON, or unsafe URL)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missingUrl": {
+                    "value": {
+                      "error": "Missing or invalid url in request body"
+                    }
+                  },
+                  "invalidJson": {
+                    "value": {
+                      "error": "Invalid JSON body"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid API key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "missingKey": {
+                    "value": {
+                      "error": "Missing x-api-key header"
+                    }
+                  },
+                  "invalidKey": {
+                    "value": {
+                      "error": "Invalid API key"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "API key request limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "limitExceeded": {
+                    "value": {
+                      "error": "API request limit exceeded"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error (fetch failure, render failure, or auth service unavailable)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponse"
+                },
+                "examples": {
+                  "fetchFailed": {
+                    "value": {
+                      "error": "Failed to fetch URL"
+                    }
+                  },
+                  "renderFailed": {
+                    "value": {
+                      "error": "Failed to render markdown to HTML"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "ApiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key",
+        "description": "Your API key. Obtain a key by subscribing on RapidAPI or contacting the provider.\nExample: `x-api-key: sk_live_your_key_here`\n"
+      }
+    },
+    "schemas": {
+      "ConvertRequest": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Public HTTP or HTTPS URL pointing to a Markdown file",
+            "example": "https://example.com/readme.md"
+          }
+        }
+      },
+      "ConvertResponse": {
+        "type": "object",
+        "required": [
+          "original_url",
+          "markdown",
+          "html"
+        ],
+        "properties": {
+          "original_url": {
+            "type": "string",
+            "format": "uri",
+            "description": "The normalized URL that was fetched",
+            "example": "https://example.com/readme.md"
+          },
+          "markdown": {
+            "type": "string",
+            "description": "Raw Markdown content fetched from the URL",
+            "example": "# Hello\n\nWorld"
+          },
+          "html": {
+            "type": "string",
+            "description": "HTML rendered from the Markdown content",
+            "example": "<h1>Hello</h1>\n<p>World</p>"
+          }
+        }
+      },
+      "ErrorResponse": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Human-readable error message",
+            "example": "Missing or invalid url in request body"
+          }
+        }
+      }
+    }
+  },
+  "security": [
+    {
+      "ApiKeyAuth": []
+    }
+  ]
+}

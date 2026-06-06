@@ -1,16 +1,20 @@
-const curlExample = `curl -X POST https://your-domain.vercel.app/api/v1/convert \\
-  -H "Content-Type: application/json" \\
-  -H "x-api-key: sk_live_your_key_here" \\
-  -d '{"url": "https://example.com/readme.md"}'`;
+import { getAppUrl } from "@/lib/config";
 
-const fetchExample = `const response = await fetch("https://your-domain.vercel.app/api/v1/convert", {
+const appUrl = getAppUrl();
+
+const curlExample = `curl -X POST ${appUrl}/api/v1/convert \\
+  -H "Content-Type: application/json" \\
+  -H "x-api-key: YOUR_API_KEY" \\
+  -d '{"url": "https://raw.githubusercontent.com/github/markdown-toolbar-element/main/README.md"}'`;
+
+const fetchExample = `const response = await fetch("${appUrl}/api/v1/convert", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
-    "x-api-key": "sk_live_your_key_here",
+    "x-api-key": "YOUR_API_KEY",
   },
   body: JSON.stringify({
-    url: "https://example.com/readme.md",
+    url: "https://raw.githubusercontent.com/github/markdown-toolbar-element/main/README.md",
   }),
 });
 
@@ -50,9 +54,17 @@ export default function Home() {
           <div className="text-sm font-semibold tracking-tight">
             Markdown API
           </div>
-          <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
-            v1
-          </span>
+          <div className="flex gap-3 text-sm">
+            <a
+              href="/docs"
+              className="rounded-full bg-zinc-100 px-3 py-1 font-medium text-zinc-700 hover:bg-zinc-200 dark:bg-zinc-900 dark:text-zinc-300 dark:hover:bg-zinc-800"
+            >
+              API Docs
+            </a>
+            <span className="rounded-full bg-zinc-100 px-3 py-1 text-xs font-medium text-zinc-600 dark:bg-zinc-900 dark:text-zinc-300">
+              v1
+            </span>
+          </div>
         </div>
       </header>
 
@@ -100,6 +112,16 @@ export default function Home() {
           <CodeBlock title="curl">{curlExample}</CodeBlock>
           <CodeBlock title="fetch">{fetchExample}</CodeBlock>
           <CodeBlock title="response">{responseExample}</CodeBlock>
+          <p className="text-sm text-zinc-600 dark:text-zinc-400">
+            Full OpenAPI spec and Swagger UI:{" "}
+            <a href="/docs" className="font-medium underline">
+              /docs
+            </a>{" "}
+            ·{" "}
+            <a href="/openapi.json" className="font-medium underline">
+              openapi.json
+            </a>
+          </p>
         </section>
 
         <section className="space-y-4">

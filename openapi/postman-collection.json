@@ -1,0 +1,46 @@
+{
+  "info": {
+    "name": "Markdown Converter",
+    "description": "Fetch Markdown from a URL and return raw Markdown plus HTML.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://markdown-converter-api.vercel.app"
+    },
+    {
+      "key": "apiKey",
+      "value": "YOUR_API_KEY"
+    }
+  ],
+  "item": [
+    {
+      "name": "Convert Markdown URL",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "x-api-key",
+            "value": "{{apiKey}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"url\": \"https://raw.githubusercontent.com/github/markdown-toolbar-element/main/README.md\"\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/v1/convert",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "v1", "convert"]
+        },
+        "description": "Fetches Markdown from the provided URL and returns original_url, markdown, and html."
+      },
+      "response": []
+    }
+  ]
+}
